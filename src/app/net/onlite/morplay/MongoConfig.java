@@ -13,6 +13,53 @@ import java.util.List;
  */
 public class MongoConfig {
     /**
+     * Database configuration
+     */
+    public static class DbConfig {
+        /**
+         * Name
+         */
+        private final String name;
+
+        /**
+         * Login
+         */
+        private final String login;
+
+        /**
+         * Password
+         */
+        private final char[] password;
+
+        /**
+         * @param name Database name
+         * @param login Login
+         * @param password Password
+         */
+        public DbConfig(String name, String login, char[] password) {
+            this.name = name;
+            this.login = login;
+            this.password = password;
+        }
+
+        public boolean isSecure() {
+            return name != null && password != null;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getLogin() {
+            return login;
+        }
+
+        public char[] getPassword() {
+            return password;
+        }
+    }
+
+    /**
      * Configuration parameters prefix
      */
     private static final String CONFIG_PREFIX = "morplay";
@@ -23,14 +70,9 @@ public class MongoConfig {
     private static final String CONFIG_SEEDS = "seeds";
 
     /**
-     * Host config parameter name
+     * Databases config parameter name
      */
-    private static final String CONFIG_HOST = "host";
-
-    /**
-     * Port config parameter name
-     */
-    private static final String CONFIG_PORT = "port";
+    private static final String CONFIG_DATABASES = "databases";
 
     /**
      * Write concern config parameter name
@@ -41,20 +83,6 @@ public class MongoConfig {
      * Play configuration for plugin
      */
     private final Configuration pluginConfig = Configuration.root().getConfig(CONFIG_PREFIX);
-
-
-
-    /**
-     * Is multiple db addresses used
-     * @return True or false.
-     */
-    public boolean isMultiple() {
-        // Get seeds string from configuration
-        String seedsString = pluginConfig.getString(CONFIG_SEEDS, "");
-
-        // If seeds configured then multiple addresses used
-        return !seedsString.isEmpty();
-    }
 
     /**
      * Get server addresses
@@ -90,21 +118,6 @@ public class MongoConfig {
     }
 
     /**
-     * Get server address
-     * @return Mongo server address
-     */
-    public ServerAddress getServerAddress() {
-        String host = pluginConfig.getString(CONFIG_HOST, ServerAddress.defaultHost());
-        int port = pluginConfig.getInt(CONFIG_PORT, ServerAddress.defaultPort());
-
-        try {
-            return new ServerAddress(host, port);
-        } catch (UnknownHostException e) {
-            throw pluginConfig.reportError(CONFIG_HOST, "Invalid host", e);
-        }
-    }
-
-    /**
      * Get default write concern for mongo operations
      * @return Write concern
      */
@@ -113,16 +126,47 @@ public class MongoConfig {
         return WriteConcern.valueOf(writeConcernString);
     }
 
-    public String getDbName() {
-        return null;  //To change body of created methods use File | Settings | File Templates.
-    }
+    /**
+     * Get configured databases
+     * @return Databases configurations
+     */
+    public List<DbConfig> getDatabases() {
+        // Get databases string from configuration
+        String dbsString = pluginConfig.getString(CONFIG_DATABASES, "");
 
-    public String getDbLogin() {
-        return null;  //To change body of created methods use File | Settings | File Templates.
-    }
+        // Split string into databases strings
+        String[] databases = dbsString.split("[;,\\s]+");
+        if (databases.length == 0) {
+            throw pluginConfig.reportError(CONFIG_DATABASES, "Empty databases list..", new RuntimeException());
+        }
 
+        List<DbConfig> result = new LinkedList<DbConfig>();
+        for (String database : databases) {
+            // Split database string into parts [<login>:<password>@]<name>
+            String[] dbParts = database.split("@");
 
-    public String getDbPassword() {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+            DbConfig dbConf;
+            if (dbParts.length == 2) { // DB with authorization
+                // Extract auth info
+                String[] auth = dbParts[0].split(":");
+                if (auth.length != 2) {
+                    throw pluginConfig.reportError(CONFIG_DATABASES, "Invalid db auth parameters.", new RuntimeException());
+                }
+
+                String name = dbParts[1];
+                String login = auth[0];
+                char[] password = auth[1].toCharArray();
+
+                dbConf = new DbConfig(name, login, password);
+            } else if (dbParts.length == 1) { // DB without authorization
+                dbConf = new DbConfig(dbParts[0], null, null);
+            } else {
+                throw pluginConfig.reportError(CONFIG_DATABASES, "Invalid db configuration.", new RuntimeException());
+            }
+
+            result.add(dbConf);
+        }
+
+        return result;
     }
 }

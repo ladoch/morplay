@@ -14,7 +14,7 @@ public class MongoCollectionCache {
      */
     private final Map<String, MongoCollection> cache = new HashMap<String, MongoCollection>();
     
-    public <T> boolean contains(Class<?> entityClass, Datastore ds) {
+    public <T> boolean contains(Class<T> entityClass, Datastore ds) {
         return cache.containsKey(key(entityClass, ds.getDB().getName()));
     }
     
@@ -41,6 +41,4 @@ public class MongoCollectionCache {
     private static <T> String key(Class<T> entityClass, String dbName) {
         return entityClass.getSimpleName() + dbName;
     }
-    
-    
 }

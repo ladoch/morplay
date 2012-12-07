@@ -2,7 +2,6 @@ package net.onlite.morplay;
 
 import com.google.code.morphia.Datastore;
 import com.google.code.morphia.query.Query;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Base controller with helper methods for using morphia
@@ -15,7 +14,7 @@ public class MongoController {
      * @return Collection wrapper
      */
     protected static <T> MongoCollection<T> collection(Class<T> entityClass) {
-        return collection(entityClass, MongoStorage.DEFAULT_DB);
+        return collection(entityClass, null);
     }
 
     /**
@@ -26,19 +25,6 @@ public class MongoController {
      * @return Collection wrapper
      */
     protected static <T> MongoCollection<T> collection(Class<T> entityClass, String dbName) {
-        return collection(entityClass, dbName, null, null);
-    }
-
-    /**
-     * Get collection from default database
-     * @param entityClass Entity class instance
-     * @param dbName Database name
-     * @param login Login
-     * @param password Password
-     * @param <T> Entity type
-     * @return Collection wrapper
-     */
-    protected static <T> MongoCollection<T> collection(Class<T> entityClass, String dbName, String login, String password) {
         class TAtomicOperation extends AtomicOperation<T> {
             public TAtomicOperation(Datastore ds, Query<T> query, boolean multiple) {
                 super(ds, query, multiple);
@@ -64,13 +50,7 @@ public class MongoController {
         MongoCollectionCache cache = MorplayPlugin.collectionsCache();        
         MongoStorage storage = MorplayPlugin.getStorage();
 
-        Datastore ds;
-        if (StringUtils.isNotEmpty(login) && StringUtils.isNotEmpty(password)) {
-            ds = storage.ds(dbName, login, password);
-        } else {
-            ds = storage.ds(dbName);
-        }
-
+        Datastore ds = dbName == null ? storage.ds() : storage.ds(dbName);
         if (cache.contains(entityClass, ds)) {
             return MorplayPlugin.collectionsCache().get(entityClass, ds, TMongoCollection.class);
         }

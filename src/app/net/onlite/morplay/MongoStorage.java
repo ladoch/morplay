@@ -3,7 +3,6 @@ package net.onlite.morplay;
 import com.google.code.morphia.Datastore;
 import com.google.code.morphia.Morphia;
 import com.mongodb.Mongo;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,11 +12,6 @@ import java.util.Map;
  */
 public class MongoStorage {
     /**
-     * Default database key
-     */
-    public static final String DEFAULT_DB = "_defaultdb";
-
-    /**
      * Morphia instance
      */
     private final Morphia morphia = new Morphia();
@@ -25,12 +19,17 @@ public class MongoStorage {
     /**
      * Mongo instance
      */
-    private Mongo mongo;
+    private final Mongo mongo;
 
     /**
      * Data stores
      */
     private final Map<String, Datastore> dbs = new HashMap<String, Datastore>();
+
+    /**
+     * Default db
+     */
+    private Datastore defaultDb;
 
     /**
      * Constructor.
@@ -39,17 +38,25 @@ public class MongoStorage {
      */
     public MongoStorage(MongoConfig config) {
         // Initialize connection to server
-        if (config.isMultiple()) {
-            mongo = new Mongo(config.getServerAddresses());
-        } else {
-            mongo = new Mongo(config.getServerAddress());
-        }
-
+        mongo = new Mongo(config.getServerAddresses());
         mongo.setWriteConcern(config.getDefaultWriteConcern());
 
-        // Open default db
-        Datastore datastore = ds(config.getDbName(), config.getDbLogin(), config.getDbPassword());
-        dbs.put(DEFAULT_DB, datastore);
+        // Open databases
+        for (MongoConfig.DbConfig dbConfig : config.getDatabases()) {
+            Datastore datastore;
+            if (dbConfig.isSecure()) {
+                datastore = morphia.createDatastore(mongo, dbConfig.getName(),
+                        dbConfig.getLogin(), dbConfig.getPassword());
+            } else {
+                datastore = morphia.createDatastore(mongo, dbConfig.getName());
+            }
+
+            if (defaultDb == null) {
+                defaultDb = datastore;
+            }
+
+            dbs.put(dbConfig.getName(), datastore);
+        }
     }
 
     /**
@@ -70,7 +77,7 @@ public class MongoStorage {
      * @return Default data store
      */
     public Datastore ds() {
-        return ds(DEFAULT_DB);
+        return defaultDb;
     }
 
     /**
@@ -79,29 +86,7 @@ public class MongoStorage {
      * @return Datastore
      */
     public Datastore ds(String dbName) {
-        return ds(dbName, null, null);
-    }
-
-    /**
-     * Get alternative data store by DB name
-     * @param dbName DB name
-     * @param dbLogin Login
-     * @param dbPassword Password
-     * @return Datastore
-     */
-    public Datastore ds(String dbName, String dbLogin, String dbPassword) {
-        if (dbs.containsKey(dbName)) {
-            return dbs.get(dbName);
-        }
-
-        Datastore ds;
-        if (StringUtils.isEmpty(dbLogin) || StringUtils.isEmpty(dbPassword)) {
-            ds = morphia.createDatastore(mongo, dbName);
-        } else {
-            ds = morphia.createDatastore(mongo, dbName, dbLogin, dbPassword.toCharArray());
-        }
-
-        return dbs.put(dbName, ds);
+        return dbs.get(dbName);
     }
 
     /**
