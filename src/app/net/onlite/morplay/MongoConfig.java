@@ -1,11 +1,14 @@
 package net.onlite.morplay;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 import play.Configuration;
 
+import javax.annotation.Nullable;
 import java.net.UnknownHostException;
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -93,28 +96,30 @@ public class MongoConfig {
         String seedsString = pluginConfig.getString(CONFIG_SEEDS, "");
 
         // Split string into urls
-        String[] seeds = seedsString.split("[;,\\s]+");
+        List<String> seeds = Arrays.asList(seedsString.split("[;,\\s]+"));
 
-        List<ServerAddress> addresses = new LinkedList<ServerAddress>();
-        for (String seed : seeds) {
-            // Split seed string into url parts <host>[:<port>]
-            String[] seedParts = seed.split(":");
-            if (seedParts.length == 0) {
-                continue;
+        return Lists.transform(seeds, new Function<String, ServerAddress>() {
+            @Override
+            public ServerAddress apply(@Nullable String seed) {
+                assert seed != null;
+                
+                // Split seed string into url parts <host>[:<port>]                
+                String[] seedParts = seed.split(":");
+                if (seedParts.length == 0) {
+                    throw pluginConfig.reportError(CONFIG_SEEDS, "Invalid seed", new RuntimeException());
+                }
+
+                // Get host and port from url
+                String host = seedParts[0];
+                int port = seedParts.length > 1 ? Integer.parseInt(seedParts[1]) : ServerAddress.defaultPort();
+
+                try {
+                    return new ServerAddress(host, port);
+                } catch (UnknownHostException e) {
+                    throw pluginConfig.reportError(CONFIG_SEEDS, "Invalid host", e);
+                }
             }
-
-            // Get host and port from url
-            String host = seedParts[0];
-            int port = seedParts.length > 1 ? Integer.parseInt(seedParts[1]) : ServerAddress.defaultPort();
-
-            try {
-                addresses.add(new ServerAddress(host, port));
-            } catch (UnknownHostException e) {
-                throw pluginConfig.reportError(CONFIG_SEEDS, "Invalid host", e);
-            }
-        }
-
-        return addresses;
+        });
     }
 
     /**
@@ -135,38 +140,40 @@ public class MongoConfig {
         String dbsString = pluginConfig.getString(CONFIG_DATABASES, "");
 
         // Split string into databases strings
-        String[] databases = dbsString.split("[;,\\s]+");
-        if (databases.length == 0) {
+        List<String> databases = Arrays.asList(dbsString.split("[;,\\s]+"));
+        if (databases.isEmpty()) {
             throw pluginConfig.reportError(CONFIG_DATABASES, "Empty databases list..", new RuntimeException());
         }
+        
+        return Lists.transform(databases, new Function<String, DbConfig>() {
+            @Override
+            public DbConfig apply(@Nullable String database) {
+                assert database != null;
 
-        List<DbConfig> result = new LinkedList<DbConfig>();
-        for (String database : databases) {
-            // Split database string into parts [<login>:<password>@]<name>
-            String[] dbParts = database.split("@");
+                // Split database string into parts [<login>:<password>@]<name>
+                String[] dbParts = database.split("@");
 
-            DbConfig dbConf;
-            if (dbParts.length == 2) { // DB with authorization
-                // Extract auth info
-                String[] auth = dbParts[0].split(":");
-                if (auth.length != 2) {
-                    throw pluginConfig.reportError(CONFIG_DATABASES, "Invalid db auth parameters.", new RuntimeException());
+                DbConfig dbConf;
+                if (dbParts.length == 2) { // DB with authorization
+                    // Extract auth info
+                    String[] auth = dbParts[0].split(":");
+                    if (auth.length != 2) {
+                        throw pluginConfig.reportError(CONFIG_DATABASES, "Invalid db auth parameters.", new RuntimeException());
+                    }
+
+                    String name = dbParts[1];
+                    String login = auth[0];
+                    char[] password = auth[1].toCharArray();
+
+                    dbConf = new DbConfig(name, login, password);
+                } else if (dbParts.length == 1) { // DB without authorization
+                    dbConf = new DbConfig(dbParts[0], null, null);
+                } else {
+                    throw pluginConfig.reportError(CONFIG_DATABASES, "Invalid db configuration.", new RuntimeException());
                 }
 
-                String name = dbParts[1];
-                String login = auth[0];
-                char[] password = auth[1].toCharArray();
-
-                dbConf = new DbConfig(name, login, password);
-            } else if (dbParts.length == 1) { // DB without authorization
-                dbConf = new DbConfig(dbParts[0], null, null);
-            } else {
-                throw pluginConfig.reportError(CONFIG_DATABASES, "Invalid db configuration.", new RuntimeException());
+                return dbConf;
             }
-
-            result.add(dbConf);
-        }
-
-        return result;
+        });
     }
 }

@@ -2,10 +2,15 @@ package net.onlite.morplay;
 
 import com.google.code.morphia.Datastore;
 import com.google.code.morphia.Morphia;
+import com.google.code.morphia.annotations.Embedded;
+import com.google.code.morphia.annotations.Entity;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.mongodb.Mongo;
+import play.Play;
+import play.libs.Classpath;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Mongo storage abstraction
@@ -40,6 +45,19 @@ public class MongoStorage {
         // Initialize connection to server
         mongo = new Mongo(config.getServerAddresses());
         mongo.setWriteConcern(config.getDefaultWriteConcern());
+
+        // Map classes
+
+        Iterable<String> entities = Classpath.getTypesAnnotatedWith(Play.application(), "models", Entity.class);
+        Iterable<String> embedded = Classpath.getTypesAnnotatedWith(Play.application(), "models", Embedded.class);
+
+        for(String className : Iterables.concat(entities, embedded)) {
+            try {
+                morphia.map(Class.forName(className, true, Play.application().classloader()));
+            } catch (ClassNotFoundException e) {
+                // TODO: log
+            }
+        }
 
         // Open databases
         for (MongoConfig.DbConfig dbConfig : config.getDatabases()) {
