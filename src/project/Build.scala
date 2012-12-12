@@ -11,7 +11,8 @@ object ApplicationBuild extends Build {
     // Add your project dependencies here,
     javaCore,
     "com.google.code.morphia"    % "morphia"               % "1.00-SNAPSHOT",
-    "com.google.code.morphia"    % "morphia-logging-slf4j" % "0.99"
+    "com.google.code.morphia"    % "morphia-logging-slf4j" % "0.99",
+    "org.mockito"                % "mockito-all"           % "1.9.0"
   )
 
   object Resolvers {
