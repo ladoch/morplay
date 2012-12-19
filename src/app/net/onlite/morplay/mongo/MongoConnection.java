@@ -3,6 +3,7 @@ package net.onlite.morplay.mongo;
 import com.github.jmkgreen.morphia.Datastore;
 import com.github.jmkgreen.morphia.Morphia;
 import com.mongodb.Mongo;
+import play.Play;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,11 +36,22 @@ public class MongoConnection {
      * Constructor.
      * Initialize mongo connection.
      * @param config Mongo configuration
+     * @param mappingClasses Entities and embedded classes for mapping.
      */
-    public MongoConnection(MongoConfig config) {
+    public MongoConnection(MongoConfig config, Iterable<String> mappingClasses) {
         // Initialize connection to server
         mongo = new Mongo(config.getServerAddresses());
         mongo.setWriteConcern(config.getDefaultWriteConcern());
+
+        // Map classes
+        for(String className : mappingClasses) {
+            try {
+                Morphia morphia = morphia();
+                morphia.map(Class.forName(className, true, Play.application().classloader()));
+            } catch (ClassNotFoundException e) {
+                // TODO: log
+            }
+        }
 
         defaultStoreName = config.getDatabases().get(0).getName();
 
@@ -52,6 +64,10 @@ public class MongoConnection {
             } else {
                 ds = morphia.createDatastore(mongo, dbConf.getName());
             }
+
+            // Creates indexes and capped collections from annotations
+            ds.ensureIndexes();
+            ds.ensureCaps();
 
             stores.put(dbConf.getName(), new MongoStore(ds));
         }

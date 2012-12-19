@@ -1,6 +1,5 @@
 package net.onlite.morplay;
 
-import com.github.jmkgreen.morphia.Morphia;
 import com.github.jmkgreen.morphia.annotations.Embedded;
 import com.github.jmkgreen.morphia.annotations.Entity;
 import com.google.common.collect.Iterables;
@@ -50,21 +49,12 @@ public class MorplayPlugin extends Plugin {
         // Read configuration
         MongoConfig config = new MongoConfig();
 
-        // Initialize mongo connection
-        connection = new MongoConnection(config);
-
-        // Map classes
+        // Get entities and embedded classes
         Iterable<String> entities = Classpath.getTypesAnnotatedWith(Play.application(), "models", Entity.class);
         Iterable<String> embedded = Classpath.getTypesAnnotatedWith(Play.application(), "models", Embedded.class);
 
-        for(String className : Iterables.concat(entities, embedded)) {
-            try {
-                Morphia morphia = connection.morphia();
-                morphia.map(Class.forName(className, true, Play.application().classloader()));
-            } catch (ClassNotFoundException e) {
-                // TODO: log
-            }
-        }
+        // Initialize mongo connection
+        connection = new MongoConnection(config, Iterables.concat(entities, embedded));
     }
 
     @Override
