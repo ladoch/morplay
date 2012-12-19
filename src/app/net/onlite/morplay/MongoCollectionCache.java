@@ -12,7 +12,7 @@ public class MongoCollectionCache {
     /**
      * Cache
      */
-    private final Map<String, MongoCollection> cache = new HashMap<String, MongoCollection>();
+    private final Map<String, MongoCollection> cache = new HashMap<>();
     
     public <T> boolean contains(Class<T> entityClass, Datastore ds) {
         return cache.containsKey(key(entityClass, ds.getDB().getName()));

@@ -5,12 +5,12 @@ import com.google.code.morphia.Morphia;
 import com.google.code.morphia.annotations.Embedded;
 import com.google.code.morphia.annotations.Entity;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 import com.mongodb.Mongo;
 import play.Play;
 import play.libs.Classpath;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Mongo storage abstraction
@@ -29,7 +29,7 @@ public class MongoStorage {
     /**
      * Data stores
      */
-    private final Map<String, Datastore> dbs = new HashMap<String, Datastore>();
+    private final Map<String, Datastore> dbs = new HashMap<>();
 
     /**
      * Default db
