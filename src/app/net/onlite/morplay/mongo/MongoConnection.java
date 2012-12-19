@@ -41,6 +41,8 @@ public class MongoConnection {
         mongo = new Mongo(config.getServerAddresses());
         mongo.setWriteConcern(config.getDefaultWriteConcern());
 
+        defaultStoreName = config.getDatabases().get(0).getName();
+
         // Initialize data stores
         for (MongoConfig.DbConfig dbConf : config.getDatabases()) {
             Datastore ds;
@@ -52,9 +54,6 @@ public class MongoConnection {
             }
 
             stores.put(dbConf.getName(), new MongoStore(ds));
-
-            // Set default db name
-            defaultStoreName = dbConf.getName();
         }
     }
 
