@@ -1,6 +1,6 @@
 package test;
 
-import net.onlite.morplay.AtomicOperation;
+import net.onlite.morplay.mongo.AtomicOperation;
 import org.junit.Test;
 import test.utils.DbMock;
 

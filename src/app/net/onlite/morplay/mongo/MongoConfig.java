@@ -1,4 +1,4 @@
-package net.onlite.morplay;
+package net.onlite.morplay.mongo;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;

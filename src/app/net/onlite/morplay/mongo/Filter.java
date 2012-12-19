@@ -1,5 +1,5 @@
 
-package net.onlite.morplay;
+package net.onlite.morplay.mongo;
 
 /**
  * Query filter

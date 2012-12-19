@@ -1,8 +1,7 @@
 package test;
 
-import com.google.code.morphia.Datastore;
-import net.onlite.morplay.MongoCollection;
-import net.onlite.morplay.MongoCollectionCache;
+import net.onlite.morplay.mongo.MongoCollection;
+import net.onlite.morplay.mongo.MongoCollectionCache;
 import org.junit.Test;
 import test.utils.DbMock;
 import test.utils.TestCollection;

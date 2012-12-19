@@ -1,6 +1,6 @@
 package test;
 
-import net.onlite.morplay.Filter;
+import net.onlite.morplay.mongo.Filter;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
