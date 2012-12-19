@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Mongo collection wrappers cache
+ * Responsible for cache collection objects
  */
 public class MongoCollectionCache {
     /**

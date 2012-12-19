@@ -5,7 +5,7 @@ import com.google.code.morphia.Key;
 import com.google.code.morphia.query.Query;
 
 /**
- * Mongo collection wrapper
+ * Responsible for operations on collection.
  */
 public abstract class MongoCollection<T> {
     protected final Class<T> entityClass;

@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * MongoDB based atomic update implementation
+ * Responsible for store atomic update operation command
  */
 public class AtomicOperation<T> {
 	/**
