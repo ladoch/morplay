@@ -2,10 +2,9 @@ package test;
 
 import com.google.code.morphia.Datastore;
 import com.google.code.morphia.query.Query;
-import net.onlite.morplay.AtomicOperation;
 import net.onlite.morplay.Filter;
-import net.onlite.morplay.MongoCollection;
 import org.junit.Test;
+import test.utils.TestCollection;
 
 import static org.mockito.Mockito.*;
 
@@ -23,26 +22,6 @@ public class MongoCollectionTests {
             new Filter("testCriteria1", "testValue1"),
     };
     private static final String TEST_ENTITY_STRING = "testEntityString";
-
-    /**
-     * Test collection
-     */
-    private static class TestCollection extends MongoCollection<String> {
-
-        public TestCollection(Class<String> entityClass, Datastore ds) {
-            super(entityClass, ds);
-        }
-
-        @Override
-        public AtomicOperation<String> atomic(Filter... filters) {
-            return null;
-        }
-
-        @Override
-        public AtomicOperation<String> atomicAll(Filter... filters) {
-            return null;
-        }
-    }
 
     @Test
     public void queryTest() {

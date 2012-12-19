@@ -1,10 +1,8 @@
 package test;
 
-import com.google.code.morphia.Datastore;
-import com.google.code.morphia.query.Query;
-import com.google.code.morphia.query.UpdateOperations;
 import net.onlite.morplay.AtomicOperation;
 import org.junit.Test;
+import test.utils.DbMock;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,37 +27,6 @@ public class AtomicOperationTests {
             TEST_FIELD_STRING_VALUE,
             TEST_FIELD_STRING_VALUE
     );
-
-    /**
-     * Incapsulate mocked db classes
-     */
-    private static class DbMock<T> {
-        private final UpdateOperations<T> updateOperations;
-        private final Query<T> query;
-        private final Datastore ds;
-
-        @SuppressWarnings("unchecked")
-        private DbMock(Class<T> entityClass) {
-            updateOperations = (UpdateOperations<T>)mock(UpdateOperations.class);
-            query = (Query<T>)mock(Query.class);
-            ds = mock(Datastore.class);
-
-            when(query.getEntityClass()).thenReturn(entityClass);
-            when(ds.createUpdateOperations(entityClass)).thenReturn(updateOperations);
-        }
-
-        public UpdateOperations<T> getUpdateOperations() {
-            return updateOperations;
-        }
-
-        public Query<T> getQuery() {
-            return query;
-        }
-
-        public Datastore getDs() {
-            return ds;
-        }
-    }
 
     @Test
     public void constructorTest() {
