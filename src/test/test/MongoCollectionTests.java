@@ -1,7 +1,7 @@
 package test;
 
-import com.google.code.morphia.Datastore;
-import com.google.code.morphia.query.Query;
+import com.github.jmkgreen.morphia.Datastore;
+import com.github.jmkgreen.morphia.query.Query;
 import net.onlite.morplay.mongo.Filter;
 import org.junit.Test;
 import test.utils.TestCollection;

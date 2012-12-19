@@ -1,7 +1,7 @@
 package net.onlite.morplay.mongo;
 
-import com.google.code.morphia.Datastore;
-import com.google.code.morphia.query.Query;
+import com.github.jmkgreen.morphia.Datastore;
+import com.github.jmkgreen.morphia.query.Query;
 
 /**
  * Responsible for operations on database.

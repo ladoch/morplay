@@ -1,6 +1,6 @@
 package test.utils;
 
-import com.google.code.morphia.Datastore;
+import com.github.jmkgreen.morphia.Datastore;
 import net.onlite.morplay.mongo.AtomicOperation;
 import net.onlite.morplay.mongo.Filter;
 import net.onlite.morplay.mongo.MongoCollection;

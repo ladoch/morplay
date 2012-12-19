@@ -1,8 +1,8 @@
 package net.onlite.morplay;
 
-import com.google.code.morphia.Morphia;
-import com.google.code.morphia.annotations.Embedded;
-import com.google.code.morphia.annotations.Entity;
+import com.github.jmkgreen.morphia.Morphia;
+import com.github.jmkgreen.morphia.annotations.Embedded;
+import com.github.jmkgreen.morphia.annotations.Entity;
 import com.google.common.collect.Iterables;
 import net.onlite.morplay.mongo.MongoConfig;
 import net.onlite.morplay.mongo.MongoConnection;

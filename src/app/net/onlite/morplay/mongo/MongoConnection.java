@@ -1,7 +1,7 @@
 package net.onlite.morplay.mongo;
 
-import com.google.code.morphia.Datastore;
-import com.google.code.morphia.Morphia;
+import com.github.jmkgreen.morphia.Datastore;
+import com.github.jmkgreen.morphia.Morphia;
 import com.mongodb.Mongo;
 
 import java.util.HashMap;
