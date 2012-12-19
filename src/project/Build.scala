@@ -10,14 +10,14 @@ object ApplicationBuild extends Build {
   val appDependencies = Seq(
     // Add your project dependencies here,
     javaCore,
-    "com.github.jmkgreen.morphia" % "morphia" % "1.2.2",
-    ("com.github.jmkgreen.morphia"    % "morphia-logging-slf4j" % "1.2.2" % "compile" notTransitive())
+    "com.github.jmkgreen.morphia"       % "morphia"                 % "1.2.2",
+    ("com.github.jmkgreen.morphia"      % "morphia-logging-slf4j"   % "1.2.2" % "compile" notTransitive())
       .exclude("org.slf4j","slf4j-simple")
       .exclude("org.slf4j","slf4j-jdk14"),
-    ("com.github.jmkgreen.morphia"    % "morphia-validation"    % "1.2.2" % "compile" notTransitive())
+    ("com.github.jmkgreen.morphia"      % "morphia-validation"      % "1.2.2" % "compile" notTransitive())
       .exclude("org.slf4j","slf4j-simple")
       .exclude("org.slf4j","slf4j-jdk14"),
-    "org.mockito"                % "mockito-all"           % "1.9.0"
+    "org.mockito"                       % "mockito-all"             % "1.9.0"
   )
 
   object Resolvers {
