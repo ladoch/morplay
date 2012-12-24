@@ -4,7 +4,6 @@ import com.github.jmkgreen.morphia.Datastore;
 import com.github.jmkgreen.morphia.Morphia;
 import com.mongodb.Mongo;
 import play.Application;
-import play.Play;
 
 import java.util.HashMap;
 import java.util.Map;

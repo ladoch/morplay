@@ -2,7 +2,6 @@
 package net.onlite.morplay.mongo;
 
 import com.github.jmkgreen.morphia.Datastore;
-import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
 
 import java.util.Arrays;
@@ -20,7 +19,7 @@ public class AtomicOperation<T> {
 	/**
 	 * Query
 	 */
-	private final Query<T> query;
+	private final MongoQuery<T> query;
 
 	/**
 	 * Update multiple
@@ -38,7 +37,7 @@ public class AtomicOperation<T> {
 	 * @param query Morphia query
 	 * @param multiple Is multiple items should be updated
 	 */
-	public AtomicOperation(Datastore ds, Query<T> query, boolean multiple) {
+	public AtomicOperation(Datastore ds, MongoQuery<T> query, boolean multiple) {
 		this.ds = ds;
 		this.query = query;
 		this.multiple = multiple;
@@ -143,9 +142,9 @@ public class AtomicOperation<T> {
 	 */
 	public void update(boolean upsert) {
 		if (multiple) {
-			ds.update(query, updateOperations, upsert);
+			ds.update(query.getImpl(), updateOperations, upsert);
 		} else {
-			ds.updateFirst(query, updateOperations, upsert);
+			ds.updateFirst(query.getImpl(), updateOperations, upsert);
 		}
 	}
 
@@ -160,10 +159,10 @@ public class AtomicOperation<T> {
 			throw new RuntimeException("Not implemented");
 		}
 
-		return ds.findAndModify(query, updateOperations, !isNew);
+		return ds.findAndModify(query.getImpl(), updateOperations, !isNew);
 	}
 
-    public Query<T> query() {
+    public MongoQuery<T> query() {
         return query;
     }
 }

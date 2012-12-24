@@ -4,6 +4,7 @@ import com.github.jmkgreen.morphia.Datastore;
 import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
 import com.mongodb.DB;
+import net.onlite.morplay.mongo.MongoQuery;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -13,19 +14,20 @@ import static org.mockito.Mockito.when;
  */
 public class DbMock<T> {
     private final UpdateOperations<T> updateOperations;
-    private final Query<T> query;
+    private final MongoQuery<T> query;
     private final Datastore ds;
-    private final DB db;
 
     @SuppressWarnings("unchecked")
     public DbMock(Class<T> entityClass) {
         updateOperations = (UpdateOperations<T>)mock(UpdateOperations.class);
-        query = (Query<T>)mock(Query.class);
+        query = (MongoQuery<T>)mock(MongoQuery.class);
         ds = mock(Datastore.class);
-        db = mock(DB.class);
+
+        DB db = mock(DB.class);
 
         when(db.getName()).thenReturn("test");
         when(query.getEntityClass()).thenReturn(entityClass);
+        when(query.getImpl()).thenReturn((Query<T>)mock(Query.class));
         when(ds.createUpdateOperations(entityClass)).thenReturn(updateOperations);
         when(ds.getDB()).thenReturn(db);
     }
@@ -34,7 +36,7 @@ public class DbMock<T> {
         return updateOperations;
     }
 
-    public Query<T> getQuery() {
+    public MongoQuery<T> getQuery() {
         return query;
     }
 
