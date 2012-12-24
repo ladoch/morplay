@@ -2,6 +2,8 @@ package net.onlite.morplay;
 
 import com.github.jmkgreen.morphia.annotations.Embedded;
 import com.github.jmkgreen.morphia.annotations.Entity;
+import com.github.jmkgreen.morphia.logging.MorphiaLoggerFactory;
+import com.github.jmkgreen.morphia.logging.slf4j.SLF4JLogrImplFactory;
 import com.google.common.collect.Iterables;
 import net.onlite.morplay.mongo.MongoConfig;
 import net.onlite.morplay.mongo.MongoConnection;
@@ -61,6 +63,11 @@ public class MorplayPlugin extends Plugin {
 
     @Override
     public void onStart() {
+
+        // Register logger
+        MorphiaLoggerFactory.reset();
+        MorphiaLoggerFactory.registerLogger(SLF4JLogrImplFactory.class);
+
         // Read configuration
         MongoConfig config = new MongoConfig();
 
