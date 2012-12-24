@@ -9,7 +9,6 @@ import net.onlite.morplay.mongo.MongoConfig;
 import net.onlite.morplay.mongo.MongoConnection;
 import net.onlite.morplay.mongo.MongoStore;
 import play.Application;
-import play.Play;
 import play.Plugin;
 import play.libs.Classpath;
 

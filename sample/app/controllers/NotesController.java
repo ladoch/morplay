@@ -2,19 +2,16 @@ package controllers;
 
 import models.Note;
 import net.onlite.morplay.MorplayPlugin;
-import net.onlite.morplay.mongo.AtomicOperation;
 import net.onlite.morplay.mongo.Filter;
 import net.onlite.morplay.mongo.MongoCollection;
 import org.bson.types.ObjectId;
 import play.data.DynamicForm;
 import play.data.Form;
-import play.data.validation.ValidationError;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
 
 import java.util.List;
-import java.util.Map;
 
 import static play.data.Form.form;
 

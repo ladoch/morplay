@@ -1,7 +1,6 @@
 package net.onlite.morplay.mongo;
 
 import com.github.jmkgreen.morphia.Datastore;
-import com.github.jmkgreen.morphia.query.Query;
 
 /**
  * Responsible for operations on database.
@@ -40,7 +39,7 @@ public class MongoStore {
          * Concrete atomic operation class
          */
         class TAtomicOperation extends AtomicOperation<T> {
-            public TAtomicOperation(Datastore ds, Query<T> query, boolean multiple) {
+            public TAtomicOperation(Datastore ds, MongoQuery<T> query, boolean multiple) {
                 super(ds, query, multiple);
             }
         }
