@@ -20,6 +20,11 @@ public class TestCollection extends MongoCollection<String> {
     }
 
     @Override
+    public AtomicOperation<String> atomic(String entity) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     public AtomicOperation<String> atomicAll(Filter... filters) {
         return null;
     }
