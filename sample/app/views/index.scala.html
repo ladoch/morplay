@@ -1,0 +1,56 @@
+@(notes: List[Note], noteForm: Form[Note])
+
+@import helper.twitterBootstrap._
+
+@main("Simple notepad") {
+    <div class="page-header">
+        <h1>Simple notepad</h1>
+    </div>
+
+    <div class="row">
+        <div class="span8">
+            <legend>Recent notes</legend>
+
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Note text</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @for(note <- notes) {
+                        <tr>
+                            <td>
+                                @note.getText()
+                            </td>
+                            <td>
+                                @note.getDate()
+                            </td>
+                            <td>
+                                @helper.form(action = routes.NotesController.delete(), 'class -> "form-inline") {
+                                    <input type="hidden" name="id" value="@note.getId()">
+                                    <input type="submit" class="btn btn-danger" value="Delete">
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+
+
+        <div class="span4">
+            <legend>Add new note...</legend>
+            @helper.form(action = routes.NotesController.create(), 'class -> "well") {
+                @helper.textarea(noteForm("text"), 'class -> "span3")
+
+                <input type="submit" value="Add note" class="btn btn-success">
+            }
+        </div>
+
+    </div>
+}
