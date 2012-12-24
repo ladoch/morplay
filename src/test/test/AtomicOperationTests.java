@@ -106,7 +106,7 @@ public class AtomicOperationTests {
         AtomicOperation<String> testOp = createAtomicOperation(dbMock);
 
         testOp.update(TEST_UPSERT_VALUE);
-        verify(dbMock.getDs(), times(1)).updateFirst(dbMock.getQuery(),
+        verify(dbMock.getDs(), times(1)).updateFirst(dbMock.getQuery().getImpl(),
                 dbMock.getUpdateOperations(), TEST_UPSERT_VALUE);
     }
 
@@ -116,7 +116,7 @@ public class AtomicOperationTests {
         AtomicOperation<String> testOp = createAtomicOperation(dbMock);
 
         testOp.findAndModify(true);
-        verify(dbMock.getDs(), times(1)).findAndModify(dbMock.getQuery(),
+        verify(dbMock.getDs(), times(1)).findAndModify(dbMock.getQuery().getImpl(),
                 dbMock.getUpdateOperations(), false);
     }
 
