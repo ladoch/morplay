@@ -2,7 +2,6 @@ package controllers;
 
 import models.Note;
 import net.onlite.morplay.MorplayPlugin;
-import net.onlite.morplay.mongo.Filter;
 import net.onlite.morplay.mongo.MongoCollection;
 import org.bson.types.ObjectId;
 import play.data.DynamicForm;
@@ -27,7 +26,7 @@ public class NotesController extends Controller {
         MongoCollection<Note> collection = MorplayPlugin.store().collection(Note.class);
 
         // Get notes
-        List<Note> notes = collection.query()
+        List<Note> notes = collection.find()
                                      .order("-date")
                                      .limit(20)
                                      .asList();
@@ -73,7 +72,7 @@ public class NotesController extends Controller {
         if (form.get("id") == null) {
             flash("error", "Can not delete note!");
         } else {
-            collection.remove(new Filter("_id", new ObjectId(form.get("id"))));
+            collection.removeById(new ObjectId(form.get("id")));
 
             // Success message
             flash("message", "Note removed!");

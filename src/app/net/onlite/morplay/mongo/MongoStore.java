@@ -1,6 +1,7 @@
 package net.onlite.morplay.mongo;
 
 import com.github.jmkgreen.morphia.Datastore;
+import com.github.jmkgreen.morphia.Key;
 
 /**
  * Responsible for operations on database.
@@ -54,12 +55,18 @@ public class MongoStore {
 
             @Override
             public AtomicOperation<T> atomic(Filter... filters) {
-                return new TAtomicOperation(ds, query(filters), false);
+                return new TAtomicOperation(ds, find(filters), false);
+            }
+
+            @Override
+            public AtomicOperation<T> atomic(T entity) {
+                Key<T> key = ds().getKey(entity);
+                return new TAtomicOperation(ds, find(new Filter("_id", key.getId())), false);
             }
 
             @Override
             public AtomicOperation<T> atomicAll(Filter... filters) {
-                return new TAtomicOperation(ds, query(filters), true);
+                return new TAtomicOperation(ds, find(filters), true);
             }
         }
 
