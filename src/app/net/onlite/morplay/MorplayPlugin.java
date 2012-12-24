@@ -6,6 +6,7 @@ import com.google.common.collect.Iterables;
 import net.onlite.morplay.mongo.MongoConfig;
 import net.onlite.morplay.mongo.MongoConnection;
 import net.onlite.morplay.mongo.MongoStore;
+import play.Application;
 import play.Play;
 import play.Plugin;
 import play.libs.Classpath;
@@ -18,6 +19,20 @@ public class MorplayPlugin extends Plugin {
      * Mongo connection
      */
     private static MongoConnection connection;
+
+    /**
+     * Application instance
+     */
+    private Application application;
+
+    /**
+     * Instantiate plugin
+     * @param application Application instance
+     */
+    public MorplayPlugin(Application application) {
+
+        this.application = application;
+    }
 
     /**
      * Get mongo connection instance
@@ -50,11 +65,11 @@ public class MorplayPlugin extends Plugin {
         MongoConfig config = new MongoConfig();
 
         // Get entities and embedded classes
-        Iterable<String> entities = Classpath.getTypesAnnotatedWith(Play.application(), "models", Entity.class);
-        Iterable<String> embedded = Classpath.getTypesAnnotatedWith(Play.application(), "models", Embedded.class);
+        Iterable<String> entities = Classpath.getTypesAnnotatedWith(application, "models", Entity.class);
+        Iterable<String> embedded = Classpath.getTypesAnnotatedWith(application, "models", Embedded.class);
 
         // Initialize mongo connection
-        connection = new MongoConnection(config, Iterables.concat(entities, embedded));
+        connection = new MongoConnection(config, Iterables.concat(entities, embedded), application);
     }
 
     @Override
