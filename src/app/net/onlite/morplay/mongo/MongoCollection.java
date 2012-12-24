@@ -16,14 +16,14 @@ public abstract class MongoCollection<T> {
         this.ds = ds;
     }
 
-    public Query<T> query(Filter... filters) {
+    public MongoQuery<T> query(Filter... filters) {
         Query<T> query = ds.find(entityClass);
 
         for (Filter filter : filters) {
             query.filter(filter.getCriteria(), filter.getValue());
         }
 
-        return query;
+        return new MongoQuery<>(query);
     }
 
     public Key<T> create(T entity) {
