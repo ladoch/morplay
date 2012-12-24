@@ -32,7 +32,7 @@ public class MongoStore {
      * @param <T> Entity type
      * @return Collection wrapper
      */
-    protected <T> MongoCollection<T> collection(Class<T> entityClass) {
+    public <T> MongoCollection<T> collection(Class<T> entityClass) {
 
         // We need to create concrete classes for specific entity type
 
