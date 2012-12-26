@@ -22,13 +22,13 @@ object ApplicationBuild extends Build {
 
   object Resolvers {
     val morphiaRepository = "Morphia Repository" at "http://morphia.googlecode.com/svn/mavenrepo/"
-    //val githubRepository =  Resolver.file("GitHub Repository", Path.userHome / "dev" / "leodagdag.github.com" / "repository" asFile)(Resolver.ivyStylePatterns)
+    val githubRepository =  Resolver.file("GitHub Repository", Path.userHome / "Projects" / "onlite" / "ladoch.github.com" / "repository" asFile)(Resolver.ivyStylePatterns)
   }
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     resolvers ++= Seq(DefaultMavenRepository, Resolvers.morphiaRepository),
     publishMavenStyle := false,
-    //publishTo := Some(githubRepository),
+    publishTo := Some(Resolvers.githubRepository),
     checksums := Nil
   )
 
