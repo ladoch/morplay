@@ -5,11 +5,11 @@ import play.Project._
 object ApplicationBuild extends Build {
 
   val appName         = "sample"
-  val appVersion      = "0.2"
+  val appVersion      = "0.3"
 
   val appDependencies = Seq(
     javaCore,
-    "morplay"   % "morplay_2.10" % "0.2"
+    "morplay"   % "morplay_2.10" % "0.3"
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
