@@ -12,8 +12,13 @@ object ApplicationBuild extends Build {
     "morplay"   % "morplay_2.10" % "0.3"
   )
 
+  object Resolvers {
+     val githubRepository = "GitHub plugin repository" at "http://ladoch.github.com/repository/"
+  }
+
   val main = play.Project(appName, appVersion, appDependencies).settings(
-    // Add your own project settings here      
+    // TODO: uncomment, when repository will be public
+    //resolvers ++= Seq(DefaultMavenRepository, Resolvers.githubRepository)
   )
 
 }
