@@ -6,6 +6,7 @@ import net.onlite.morplay.mongo.MongoCollection;
 import org.bson.types.ObjectId;
 import play.data.DynamicForm;
 import play.data.Form;
+import play.libs.F;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
@@ -26,13 +27,18 @@ public class NotesController extends Controller {
         MongoCollection<Note> collection = MorplayPlugin.store().collection(Note.class);
 
         // Get notes
-        List<Note> notes = collection.find()
-                                     .order("-date")
-                                     .limit(20)
-                                     .asList();
+        F.Promise<List<Note>> notes = collection.find()
+                                                .order("-date")
+                                                .limit(20)
+                                                .asList();
 
 
-        return ok(index.render(notes, form(Note.class)));
+        return async(notes.map(new F.Function<List<Note>, Result>() {
+            @Override
+            public Result apply(List<Note> notes) throws Throwable {
+                return ok(index.render(notes, form(Note.class)));
+            }
+        }));
     }
 
     /**
