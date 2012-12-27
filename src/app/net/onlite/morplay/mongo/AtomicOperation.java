@@ -3,9 +3,13 @@ package net.onlite.morplay.mongo;
 
 import com.github.jmkgreen.morphia.Datastore;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
+import com.github.jmkgreen.morphia.query.UpdateResults;
+import play.libs.Akka;
+import play.libs.F;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * Responsible for store atomic update operation command
@@ -139,27 +143,42 @@ public class AtomicOperation<T> {
 	/**
 	 * Execute atomic update
 	 * @param upsert Create if not exist
+     * @return Promise
 	 */
-	public void update(boolean upsert) {
-		if (multiple) {
-			ds.update(query.getImpl(), updateOperations, upsert);
-		} else {
-			ds.updateFirst(query.getImpl(), updateOperations, upsert);
-		}
+	public F.Promise<UpdateResults<T>> update(final boolean upsert) {
+        return Akka.future(new Callable<UpdateResults<T>>() {
+            @Override
+            public UpdateResults<T> call() throws Exception {
+                UpdateResults<T> result;
+
+                if (multiple) {
+                    result = ds.update(query.getImpl(), updateOperations, upsert);
+                } else {
+                    result = ds.updateFirst(query.getImpl(), updateOperations, upsert);
+                }
+
+                return result;
+            }
+        });
 	}
 
 	/**
 	 * Execute atomic "find and modify" query
 	 *
 	 * @param isNew If true, then returned entity will include updates.
-	 * @return Entity.
+     * @return Promise
 	 */
-	public T findAndModify(boolean isNew) {
+	public F.Promise<T> findAndModify(final boolean isNew) {
 		if (multiple) {
 			throw new RuntimeException("Not implemented");
 		}
 
-		return ds.findAndModify(query.getImpl(), updateOperations, !isNew);
+        return Akka.future(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                return ds.findAndModify(query.getImpl(), updateOperations, !isNew);
+            }
+        });
 	}
 
     public MongoQuery<T> query() {
