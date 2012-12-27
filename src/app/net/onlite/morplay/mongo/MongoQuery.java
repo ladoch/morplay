@@ -3,10 +3,14 @@ package net.onlite.morplay.mongo;
 import com.github.jmkgreen.morphia.Key;
 import com.github.jmkgreen.morphia.query.Query;
 import com.mongodb.ReadPreference;
+import net.onlite.morplay.async.AsyncIterable;
 import org.bson.types.CodeWScope;
+import play.libs.Akka;
+import play.libs.F;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * Responsible for querying from collection. Uses morphia query implementation internally.
@@ -127,47 +131,78 @@ public class MongoQuery<T> {
         return impl.getEntityClass();
     }
 
-    public T get() {
-        return impl.get();
+    public F.Promise<T> get() {
+        return Akka.future(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                return impl.get();
+            }
+        });
     }
 
-    public Key<T> getKey() {
-        return impl.getKey();
+    public F.Promise<Key<T>> getKey() {
+        return Akka.future(new Callable<Key<T>>() {
+            @Override
+            public Key<T> call() throws Exception {
+                return impl.getKey();
+            }
+        });
     }
 
-    public List<T> asList() {
-        return impl.asList();
+    public F.Promise<List<T>> asList() {
+        return Akka.future(new Callable<List<T>>() {
+            @Override
+            public List<T> call() throws Exception {
+                return impl.asList();
+            }
+        });
     }
 
-    public List<Key<T>> asKeyList() {
-        return impl.asKeyList();
+    public F.Promise<List<Key<T>>> asKeyList() {
+        return Akka.future(new Callable<List<Key<T>>>() {
+            @Override
+            public List<Key<T>> call() throws Exception {
+                return impl.asKeyList();
+            }
+        });
     }
 
-    public Iterable<T> fetch() {
-        return impl.fetch();
+    public F.Promise<Long> countAll() {
+        return Akka.future(new Callable<Long>() {
+            @Override
+            public Long call() throws Exception {
+                return impl.countAll();
+            }
+        });
     }
 
-    public Iterable<T> fetchEmptyEntities() {
-        return impl.fetchEmptyEntities();
+    public AsyncIterable<T> fetch() {
+        return new AsyncIterable<>(impl.fetch());
     }
 
-    public Iterable<Key<T>> fetchKeys() {
-        return impl.fetchKeys();
+    public AsyncIterable<T> fetchEmptyEntities() {
+        return new AsyncIterable<>(impl.fetchEmptyEntities());
     }
 
-    public long countAll() {
-        return impl.countAll();
+    public AsyncIterable<Key<T>> fetchKeys() {
+        return new AsyncIterable<>(impl.fetchKeys());
     }
 
-    public Iterator<T> tail() {
-        return impl.tail();
+    public AsyncIterable<T> tail() {
+        return new AsyncIterable<>(new Iterable<T>() {
+            @Override
+            public Iterator<T> iterator() {
+                return impl.tail();
+            }
+        });
     }
 
-    public Iterator<T> tail(boolean awaitData) {
-        return impl.tail(awaitData);
-    }
-
-    public Iterator<T> iterator() {
-        return impl.iterator();
+    public AsyncIterable<T> tail(final boolean awaitData) {
+        return new AsyncIterable<>(new Iterable<T>() {
+            @Override
+            public Iterator<T> iterator() {
+                return impl.tail(awaitData);
+            }
+        });
     }
 }

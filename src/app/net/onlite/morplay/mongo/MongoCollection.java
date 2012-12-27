@@ -3,6 +3,11 @@ package net.onlite.morplay.mongo;
 import com.github.jmkgreen.morphia.Datastore;
 import com.github.jmkgreen.morphia.Key;
 import com.github.jmkgreen.morphia.query.Query;
+import com.mongodb.WriteResult;
+import play.libs.Akka;
+import play.libs.F;
+
+import java.util.concurrent.Callable;
 
 /**
  * Responsible for operations on collection.
@@ -40,8 +45,13 @@ public abstract class MongoCollection<T> {
      * @param id Document id
      * @return Entity instance or null
      */
-    public T findById(Object id) {
-        return ds.getByKey(entityClass, new Key<>(entityClass, id));
+    public F.Promise<T> findById(final Object id) {
+        return Akka.future(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                return ds.getByKey(entityClass, new Key<>(entityClass, id));
+            }
+        });
     }
 
     /**
@@ -49,31 +59,46 @@ public abstract class MongoCollection<T> {
      * @param entity Entity
      * @return Key
      */
-    public Key<T> create(T entity) {
-        return ds.save(entity);
+    public F.Promise<Key<T>> create(final T entity) {
+        return Akka.future(new Callable<Key<T>>() {
+            @Override
+            public Key<T> call() throws Exception {
+                return ds.save(entity);
+            }
+        });
     }
 
     /**
      * Remove documents
      * @param filters Query filters
      */
-    public void remove(Filter... filters) {
-        Query<T> query = ds.find(entityClass);
+    public F.Promise<WriteResult> remove(final Filter... filters) {
+        return Akka.future(new Callable<WriteResult>() {
+            @Override
+            public WriteResult call() throws Exception {
+                Query<T> query = ds.find(entityClass);
 
-        for (Filter filter : filters) {
-            query.filter(filter.getCriteria(), filter.getValue());
-        }
+                for (Filter filter : filters) {
+                    query.filter(filter.getCriteria(), filter.getValue());
+                }
 
-        ds.delete(query);
+                return ds.delete(query);
+            }
+        });
     }
 
     /**
      * Remove document by id
      * @param id Document id
      */
-    public void removeById(Object id) {
-        Query<T> query = ds.find(entityClass).filter("_id", id);
-        ds.delete(query);
+    public F.Promise<WriteResult> removeById(final Object id) {
+        return Akka.future(new Callable<WriteResult>() {
+            @Override
+            public WriteResult call() throws Exception {
+                Query<T> query = ds.find(entityClass).filter("_id", id);
+                return ds.delete(query);
+            }
+        });
     }
 
     /**
