@@ -1,5 +1,7 @@
 package controllers;
 
+import com.github.jmkgreen.morphia.Key;
+import com.mongodb.WriteResult;
 import models.Note;
 import net.onlite.morplay.MorplayPlugin;
 import net.onlite.morplay.mongo.MongoCollection;
@@ -48,17 +50,24 @@ public class NotesController extends Controller {
         // Bind form
         Form<Note> form = form(Note.class).bindFromRequest(request());
 
+        // Get collection
+        MongoCollection<Note> collection = MorplayPlugin.store().collection(Note.class);
+
         if (form.hasErrors()) {
             flash("error", "Can not create note!");
         } else {
-            // Get collection
-            MongoCollection<Note> collection = MorplayPlugin.store().collection(Note.class);
-
             // Create entity
-            collection.create(form.get());
+            F.Promise<Key<Note>> promise = collection.create(form.get());
 
-            // Success message
-            flash("message", "Note added!");
+            return async(promise.map(new F.Function<Key<Note>, Result>() {
+                @Override
+                public Result apply(Key<Note> noteKey) throws Throwable {
+                    // Success message
+                    flash("message", "Note added!");
+
+                    return redirect(routes.NotesController.index());
+                }
+            }));
         }
 
 
@@ -78,10 +87,17 @@ public class NotesController extends Controller {
         if (form.get("id") == null) {
             flash("error", "Can not delete note!");
         } else {
-            collection.removeById(new ObjectId(form.get("id")));
+            F.Promise<WriteResult> promise = collection.removeById(new ObjectId(form.get("id")));
 
-            // Success message
-            flash("message", "Note removed!");
+            return async(promise.map(new F.Function<WriteResult, Result>() {
+                @Override
+                public Result apply(WriteResult writeResult) throws Throwable {
+                    // Success message
+                    flash("message", "Note removed!");
+
+                    return redirect(routes.NotesController.index());
+                }
+            }));
         }
 
         return redirect(routes.NotesController.index());
