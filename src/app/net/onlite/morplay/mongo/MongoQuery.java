@@ -167,6 +167,15 @@ public class MongoQuery<T> {
         });
     }
 
+    public F.Promise<Long> countAll() {
+        return Akka.future(new Callable<Long>() {
+            @Override
+            public Long call() throws Exception {
+                return impl.countAll();
+            }
+        });
+    }
+
     public AsyncIterable<T> fetch() {
         return new AsyncIterable<>(impl.fetch());
     }
@@ -177,15 +186,6 @@ public class MongoQuery<T> {
 
     public AsyncIterable<Key<T>> fetchKeys() {
         return new AsyncIterable<>(impl.fetchKeys());
-    }
-
-    public F.Promise<Long> countAll() {
-        return Akka.future(new Callable<Long>() {
-            @Override
-            public Long call() throws Exception {
-                return impl.countAll();
-            }
-        });
     }
 
     public AsyncIterable<T> tail() {
