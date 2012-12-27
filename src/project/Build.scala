@@ -5,7 +5,7 @@ import play.Project._
 object ApplicationBuild extends Build {
 
   val appName         = "morplay"
-  val appVersion      = "0.3"
+  val appVersion      = "0.4"
 
   val appDependencies = Seq(
     // Add your project dependencies here,
