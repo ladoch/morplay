@@ -10,6 +10,8 @@ import java.util.List;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static play.test.Helpers.fakeApplication;
+import static play.test.Helpers.running;
 
 /**
  * Atomic operation tests
@@ -102,22 +104,33 @@ public class AtomicOperationTests {
 
     @Test
     public void updateTest() {
-        DbMock<String> dbMock = new DbMock<>(String.class);
-        AtomicOperation<String> testOp = createAtomicOperation(dbMock);
+        running(fakeApplication(), new Runnable() {
+            @Override
+            public void run() {
+                DbMock<String> dbMock = new DbMock<>(String.class);
+                AtomicOperation<String> testOp = createAtomicOperation(dbMock);
 
-        testOp.update(TEST_UPSERT_VALUE);
-        verify(dbMock.getDs(), times(1)).updateFirst(dbMock.getQuery().getImpl(),
-                dbMock.getUpdateOperations(), TEST_UPSERT_VALUE);
+                testOp.update(TEST_UPSERT_VALUE).get();
+                verify(dbMock.getDs(), times(1)).updateFirst(dbMock.getQuery().getImpl(),
+                        dbMock.getUpdateOperations(), TEST_UPSERT_VALUE);
+            }
+        });
+
     }
 
     @Test
     public void findAndModifyTest() {
-        DbMock<String> dbMock = new DbMock<>(String.class);
-        AtomicOperation<String> testOp = createAtomicOperation(dbMock);
+        running(fakeApplication(), new Runnable() {
+            @Override
+            public void run() {
+                DbMock<String> dbMock = new DbMock<>(String.class);
+                AtomicOperation<String> testOp = createAtomicOperation(dbMock);
 
-        testOp.findAndModify(true);
-        verify(dbMock.getDs(), times(1)).findAndModify(dbMock.getQuery().getImpl(),
-                dbMock.getUpdateOperations(), false);
+                testOp.findAndModify(true).get();
+                verify(dbMock.getDs(), times(1)).findAndModify(dbMock.getQuery().getImpl(),
+                        dbMock.getUpdateOperations(), false);
+            }
+        });
     }
 
     private <T> AtomicOperation<T> createAtomicOperation(DbMock<T> dbMock) {
