@@ -6,22 +6,15 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import net.onlite.morplay.async.AsyncIterable;
 import org.apache.commons.lang.StringUtils;
-import org.fest.util.Collections;
 import org.junit.Test;
-import play.Application;
-import play.api.Play;
-import play.libs.Akka;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.running;
-import static play.test.Helpers.testBrowser;
 
 /**
  * Tests AsyncIterable class

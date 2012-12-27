@@ -7,7 +7,6 @@ import net.onlite.morplay.mongo.MongoQuery;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
