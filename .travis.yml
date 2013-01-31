@@ -1,0 +1,9 @@
+language: scala
+branches:
+  only:
+    - master
+    - develop
+scala:
+  - 2.10
+before_script:
+  - cd src
