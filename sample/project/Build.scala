@@ -13,12 +13,11 @@ object ApplicationBuild extends Build {
   )
 
   object Resolvers {
-     val githubRepository = "GitHub plugin repository" at "http://ladoch.github.com/repository/"
+     val githubRepository = Resolver.url("GitHub plugin repository", "http://ladoch.github.com/repository/")(Resolver.ivyStylePatterns)
   }
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
-    // TODO: uncomment, when repository will be public
-    //resolvers ++= Seq(DefaultMavenRepository, Resolvers.githubRepository)
+    resolvers ++= Seq(DefaultMavenRepository, Resolvers.githubRepository)
   )
 
 }
