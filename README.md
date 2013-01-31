@@ -1,4 +1,4 @@
-Introduction
+Introduction [![Build Status](https://secure.travis-ci.org/ladoch/morplay.png)](http://travis-ci.org/ladoch/morplay)
 ============
 
 Play 2 plugin to use Morphia ORM in asynchronous way.
@@ -20,7 +20,7 @@ Add dependency to your `project/Build.scala`:
   
 	val appDependencies = Seq(
 		javaCore,
-		"morplay"   % "morplay_2.10" % "0.5.1"
+		"morplay"   % "morplay_2.10" % "0.5.2"
 	)
 	
 	object Resolvers {
