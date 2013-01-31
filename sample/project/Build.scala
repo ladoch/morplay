@@ -13,7 +13,7 @@ object ApplicationBuild extends Build {
   )
 
   object Resolvers {
-     val githubRepository = Resolver.url("GitHub plugin repository", "http://ladoch.github.com/repository/")(Resolver.ivyStylePatterns)
+     val githubRepository = Resolver.url("GitHub plugin repository", url("http://ladoch.github.com/repository/"))(Resolver.ivyStylePatterns)
   }
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
