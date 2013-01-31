@@ -1,4 +1,4 @@
-Introduction
+Introduction [![Build Status](https://secure.travis-ci.org/ladoch/morplay.png)](http://travis-ci.org/ladoch/morplay)
 ============
 
 Play 2 plugin to use Morphia ORM in asynchronous way.
