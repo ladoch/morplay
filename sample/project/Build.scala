@@ -5,20 +5,19 @@ import play.Project._
 object ApplicationBuild extends Build {
 
   val appName         = "sample"
-  val appVersion      = "0.5"
+  val appVersion      = "0.5.1"
 
   val appDependencies = Seq(
     javaCore,
-    "morplay"   % "morplay_2.10" % "0.5"
+    "morplay"   % "morplay_2.10" % "0.5.1"
   )
 
   object Resolvers {
-     val githubRepository = "GitHub plugin repository" at "http://ladoch.github.com/repository/"
+     val githubRepository = Resolver.url("GitHub plugin repository", url("http://ladoch.github.com/repository/"))(Resolver.ivyStylePatterns)
   }
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
-    // TODO: uncomment, when repository will be public
-    //resolvers ++= Seq(DefaultMavenRepository, Resolvers.githubRepository)
+    resolvers ++= Seq(DefaultMavenRepository, Resolvers.githubRepository)
   )
 
 }
