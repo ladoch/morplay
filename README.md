@@ -20,11 +20,11 @@ Add dependency to your `project/Build.scala`:
   
 	val appDependencies = Seq(
 		javaCore,
-		"morplay"   % "morplay_2.10" % "0.5"
+		"morplay"   % "morplay_2.10" % "0.5.1"
 	)
 	
 	object Resolvers {
-		val githubRepository = "GitHub morplay repository" at "http://ladoch.github.com/repository/"
+		val githubRepository = Resolver.url("GitHub morplay repository", url("http://ladoch.github.com/repository/"))(Resolver.ivyStylePatterns)
 	}
 	
 	val main = play.Project(appName, appVersion, appDependencies).settings(
