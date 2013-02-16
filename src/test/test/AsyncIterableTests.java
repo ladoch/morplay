@@ -7,10 +7,12 @@ import com.google.common.collect.Sets;
 import net.onlite.morplay.async.AsyncIterable;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+import scala.concurrent.duration.Duration;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static play.test.Helpers.fakeApplication;
@@ -97,7 +99,7 @@ public class AsyncIterableTests {
                     public void apply(Integer integer) throws Exception {
                         testSet.remove(integer);
                     }
-                });
+                }, Duration.create(1, TimeUnit.MINUTES));
 
                 operation.run();
 

@@ -20,7 +20,7 @@ Add dependency to your `project/Build.scala`:
   
 	val appDependencies = Seq(
 		javaCore,
-		"morplay"   % "morplay_2.10" % "0.5.2"
+		"morplay"   % "morplay_2.10" % "0.6"
 	)
 	
 	object Resolvers {
