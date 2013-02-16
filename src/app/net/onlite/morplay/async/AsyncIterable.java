@@ -4,6 +4,8 @@ import akka.japi.Function;
 import akka.japi.Procedure;
 import play.libs.Akka;
 import play.libs.F;
+import scala.concurrent.Await;
+import scala.concurrent.duration.Duration;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -51,7 +53,7 @@ public class AsyncIterable<T> implements Iterable<T> {
         }).flatMap(new F.Function<Iterable<F.Promise<? extends V>>, F.Promise<List<V>>>() {
             @Override
             public F.Promise<List<V>> apply(Iterable<F.Promise<? extends V>> promises) throws Throwable {
-                return F.Promise.waitAll(promises);
+                return F.Promise.sequence(promises);
             }
         }).map(new F.Function<List<V>, Iterable<V>>() {
             @Override
@@ -85,18 +87,25 @@ public class AsyncIterable<T> implements Iterable<T> {
      * @param procedure Procedure to apply
      * @return Runnable to execute
      */
-    public Runnable forEach(final Procedure<T> procedure) {
+    public Runnable forEach(final Procedure<T> procedure, final Duration timeout) {
         return new Runnable() {
             @Override
             public void run() {
+                List<F.Promise<? extends Void>> result = new LinkedList<>();
                 for (final T item : iterable) {
-                    Akka.future(new Callable<Void>() {
+                    result.add(Akka.future(new Callable<Void>() {
                         @Override
                         public Void call() throws Exception {
                             procedure.apply(item);
                             return null;
                         }
-                    });
+                    }));
+                }
+
+                try {
+                    Await.ready(F.Promise.sequence(result).getWrappedPromise(), timeout);
+                } catch (Exception e) {
+                    // TODO: logs
                 }
             }
         };
