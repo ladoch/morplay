@@ -3,6 +3,7 @@ package net.onlite.morplay.mongo;
 import com.github.jmkgreen.morphia.Datastore;
 import com.github.jmkgreen.morphia.Morphia;
 import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 import play.Application;
 
 import java.util.HashMap;
@@ -41,7 +42,7 @@ public class MongoConnection {
      */
     public MongoConnection(MongoConfig config, Iterable<String> mappingClasses, Application app) {
         // Initialize connection to server
-        mongo = new Mongo(config.getServerAddresses());
+        mongo = new MongoClient(config.getServerAddresses());
         mongo.setWriteConcern(config.getDefaultWriteConcern());
 
         // Map classes
